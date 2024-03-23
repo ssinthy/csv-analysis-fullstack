@@ -7,10 +7,10 @@ const cookieParser = require("cookie-parser");
 
 app.use(cookieParser());
 
-app.get("/dummy", async (req, res) => {
+app.use(async function sessionMiddleware(req, res, next) {
   // Do not generate new session if already exists
   if (req.cookies.sid) {
-    res.send("Already SID exists");
+    next();
     return;
   }
 
@@ -21,10 +21,17 @@ app.get("/dummy", async (req, res) => {
     );
 
     // Send SID to client as cookie
-    res.cookie("sid", row.sid, { httpOnly: true }).send("SID set as cookie!");
+    res.cookie("sid", row.sid, { httpOnly: true });
+    console.log("New session created!");
+
+    next();
   } catch (error) {
-    res.status(500).send({ error });
+    res.status(500).send({ error: "Unable to set session" });
   }
+});
+
+app.get("/dummy", async (req, res) => {
+  res.send("I am dummy");
 });
 
 app.listen(port, () => {
