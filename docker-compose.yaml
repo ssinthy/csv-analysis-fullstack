@@ -1,0 +1,18 @@
+services:
+  frontend-web:
+    image: csv-analysis-frontend-web
+    build: ./frontend-web
+    ports:
+      - 3000:5173
+  
+  backend-gateway:
+    image: csv-analysis-gateway-server
+    build: ./backend-gateway
+    ports:
+      - 5000:5000
+
+  backend-data-processor:
+    image: csv-analysis-data-processor-server
+    build: ./backend-data-processor
+    ports:
+      - 5001:5001
