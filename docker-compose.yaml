@@ -36,5 +36,5 @@ services:
     ports:
       - 9001:80
     environment:
-      PGADMIN_DEFAULT_EMAIL: sumaiya.sultana.sinthy@gmail.com
+      PGADMIN_DEFAULT_EMAIL: susu@gmail.com
       PGADMIN_DEFAULT_PASSWORD: potato
