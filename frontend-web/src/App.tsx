@@ -1,12 +1,12 @@
-import { useState } from 'react'
+import { useState } from "react";
+import { CsvUploadForm } from "./components/CsvUploadForm";
 
 function App() {
-
   return (
-    <p >
-        Created by Sumaiya Sultana
-      </p>
-  )
+    <div>
+      <CsvUploadForm />
+    </div>
+  );
 }
 
-export default App
+export default App;
