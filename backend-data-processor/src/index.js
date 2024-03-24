@@ -40,10 +40,6 @@ function isCapacityCsvHeader(headers) {
 }
 
 app.post("/upload-csv", upload.single("csv-file"), async (req, res) => {
-  console.log(req.body);
-  console.log(req.file);
-  console.log(req.cookies);
-
   let sid = req.cookies.sid;
 
   // If not exist SID then 400

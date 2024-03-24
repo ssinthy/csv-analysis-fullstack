@@ -18,6 +18,8 @@ function CsvUploadForm() {
   const [filetype, setFiletype] = useState<CsvCategory | null>(null);
   const [filecontent, setFilecontent] = useState<File | null>(null);
 
+  const [isUploading, setUploading] = useState<boolean>(false);
+
   const onSubmit = useCallback(
     async (event: React.SyntheticEvent) => {
       event.preventDefault();
@@ -29,15 +31,20 @@ function CsvUploadForm() {
       formData.append("type", filetype);
       formData.append("csv-file", filecontent);
 
+      setUploading(true);
+
       try {
         await axios.post("/api/upload-csv", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
+
+        setUploading(false);
+        window.alert("Successfully uploaded!");
       } catch (error) {
         // TODO: handle error
-        console.log(error);
+        window.alert(error);
       }
     },
     [filename, filetype, filecontent]
@@ -53,7 +60,6 @@ function CsvUploadForm() {
         />
         <FormHelperText>Give your file a nice name</FormHelperText>
       </FormControl>
-
       <FormControl required>
         <InputLabel>File type</InputLabel>
         <Select
@@ -65,7 +71,6 @@ function CsvUploadForm() {
         </Select>
         <FormHelperText>Select your file type</FormHelperText>
       </FormControl>
-
       <FormControl required>
         <Input
           type="file"
@@ -77,9 +82,13 @@ function CsvUploadForm() {
         />
         <FormHelperText>Upload a csv file</FormHelperText>
       </FormControl>
-
-      <Button variant="outlined" color="secondary" type="submit">
-        Upload
+      <Button
+        variant="outlined"
+        color="secondary"
+        disabled={isUploading}
+        type="submit"
+      >
+        {isUploading ? "Uploading..." : "Upload"}
       </Button>
     </form>
   );
