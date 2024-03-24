@@ -6,6 +6,8 @@ const db = pgp("postgres://susu:potato@localhost:9000/susu");
 const cookieParser = require("cookie-parser");
 var proxy = require("express-http-proxy");
 
+app.use(express.urlencoded({ limit: "5000mb" }));
+
 app.use(cookieParser());
 
 app.use(async function sessionMiddleware(req, res, next) {
@@ -31,7 +33,20 @@ app.use(async function sessionMiddleware(req, res, next) {
   }
 });
 
-app.use("/api", proxy("http://localhost:5001"));
+// Proxy all API requests to DP server and DO NOT parse multipart request
+const proxyMiddleware = (req, res, next) => {
+  const isMultipartRequest = (req) => {
+    const contentTypeHeader = req.headers["content-type"];
+    return contentTypeHeader && contentTypeHeader.indexOf("multipart") > -1;
+  };
+
+  return proxy("http://localhost:5001", {
+    parseReqBody: !isMultipartRequest(req),
+    // your other fields here...
+  })(req, res, next);
+};
+
+app.use("/api", proxyMiddleware);
 
 app.listen(port, () => {
   console.log(`Gateway server listening on port ${port}`);
