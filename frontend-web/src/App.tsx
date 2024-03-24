@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { CsvUploadForm } from "./components/CsvUploadForm";
 import { FileMetadata } from "./types";
 import axios from "axios";
+import { Visualizer } from "./components/Visualizer";
 
 function App() {
   const [myFileList, setMyFileList] = useState<FileMetadata[]>([]);
@@ -34,6 +35,7 @@ function App() {
   return (
     <div>
       <CsvUploadForm />
+      <Visualizer myFileList={myFileList} />
     </div>
   );
 }

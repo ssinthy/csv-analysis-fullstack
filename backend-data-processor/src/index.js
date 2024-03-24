@@ -119,7 +119,7 @@ app.get("/myfiles", async (req, res) => {
 });
 
 app.get("/filecontent", async (req, res) => {
-  const filetype = req.body.type;
+  const filetype = req.query.file_type;
   try {
     const queryParams = req.query;
 
@@ -143,10 +143,10 @@ app.get("/filecontent", async (req, res) => {
       }
     }
 
-    let query = `SELECT ${columns} FROM ${tablename} WHERE SID = '${req.cookies.sid}' AND filename = '${req.body.name}' ${filter}`;
+    let query = `SELECT ${columns} FROM ${tablename} WHERE SID = '${req.cookies.sid}' AND filename = '${req.query.filename}' ${filter}`;
 
     try {
-      const rows = db.any(query);
+      const rows = await db.any(query);
       res.json(rows);
     } catch (error) {
       res.status(400).end("Failed to fetch file content");
