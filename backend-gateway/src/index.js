@@ -10,10 +10,10 @@ app.use(express.urlencoded({ limit: "5000mb" }));
 
 app.use(cookieParser());
 
-app.use(async function sessionMiddleware(req, res, next) {
+app.get("/api/get-session", async (req, res) => {
   // Do not generate new session if already exists
   if (req.cookies.sid) {
-    next();
+    res.end();
     return;
   }
 
@@ -26,15 +26,23 @@ app.use(async function sessionMiddleware(req, res, next) {
     // Send SID to client as cookie
     res.cookie("sid", row.sid, { httpOnly: true });
     console.log("New session created!");
-
-    next();
+    res.end();
   } catch (error) {
     res.status(500).send({ error: "Unable to set session" });
   }
 });
 
+app.use(async function sessionCheckMiddleware(req, res, next) {
+  // Do not generate new session if already exists
+  if (req.cookies.sid) {
+    next();
+    return;
+  }
+  res.status(500).send({ error: "Session does not exist" });
+});
+
 // Proxy all API requests to DP server and DO NOT parse multipart request
-const proxyMiddleware = (req, res, next) => {
+app.use("/api", (req, res, next) => {
   const isMultipartRequest = (req) => {
     const contentTypeHeader = req.headers["content-type"];
     return contentTypeHeader && contentTypeHeader.indexOf("multipart") > -1;
@@ -44,9 +52,7 @@ const proxyMiddleware = (req, res, next) => {
     parseReqBody: !isMultipartRequest(req),
     // your other fields here...
   })(req, res, next);
-};
-
-app.use("/api", proxyMiddleware);
+});
 
 app.listen(port, () => {
   console.log(`Gateway server listening on port ${port}`);
