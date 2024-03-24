@@ -4,10 +4,29 @@ import axios from "axios";
 
 function App() {
   useEffect(() => {
-    axios
-      .get("/api/get-session")
-      .catch(() => window.alert("Unable to set session. Please refresh!"));
+    async function fetchSession() {
+      try {
+        await axios.get("/api/get-session");
+      } catch (error) {
+        window.alert("Unable to set session. Please refresh!");
+      }
+    }
+
+    fetchSession();
   }, []);
+
+  useEffect(() => {
+    async function fetchMyFileList() {
+      try {
+        const { data } = await axios.get("/api/myfiles");
+        console.log(data);
+      } catch (error) {
+        window.alert("Unable to fetch my file list");
+      }
+    }
+
+    fetchMyFileList();
+  });
 
   return (
     <div>

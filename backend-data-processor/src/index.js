@@ -107,7 +107,7 @@ app.post("/upload-csv", upload.single("csv-file"), async (req, res) => {
   }
 });
 
-app.get("/api/myfiles", async (req, res) => {
+app.get("/myfiles", async (req, res) => {
   try {
     const rows = await db.any(
       `SELECT FILENAME, FILE_TYPE FROM FILE_LIST WHERE SID = '${req.cookies.sid}'`
