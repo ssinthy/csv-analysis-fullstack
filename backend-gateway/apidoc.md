@@ -6,7 +6,7 @@
 
 **Method**: POST
 
-**Endpoint**: /upload-csv
+**Endpoint**: /api/upload-csv
 
 **Request**:
 

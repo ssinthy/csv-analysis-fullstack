@@ -4,6 +4,7 @@ const port = 5000;
 const pgp = require("pg-promise")();
 const db = pgp("postgres://susu:potato@localhost:9000/susu");
 const cookieParser = require("cookie-parser");
+var proxy = require("express-http-proxy");
 
 app.use(cookieParser());
 
@@ -30,9 +31,7 @@ app.use(async function sessionMiddleware(req, res, next) {
   }
 });
 
-app.get("/dummy", async (req, res) => {
-  res.send("I am dummy");
-});
+app.use("/api", proxy("http://localhost:5001"));
 
 app.listen(port, () => {
   console.log(`Gateway server listening on port ${port}`);
