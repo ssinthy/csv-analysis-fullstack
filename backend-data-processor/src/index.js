@@ -114,7 +114,45 @@ app.get("/myfiles", async (req, res) => {
     );
     res.json(rows);
   } catch (error) {
-    res.end("Failed to fetch file list");
+    res.status(400).end("Failed to fetch file list");
+  }
+});
+
+app.get("/filecontent", async (req, res) => {
+  const filetype = req.body.type;
+  try {
+    const queryParams = req.query;
+
+    let tablename,
+      columns,
+      filter = "";
+
+    if (queryParams.cycle_number) {
+      filter += ` AND CYCLE_NUMBER >= ${queryParams.cycle_number.min} && CYCLE_NUMBER <= ${queryParams.cycle_number.max}`;
+    }
+
+    if (filetype == "CAPACITY") {
+      tablename = "CAPACITY_INFO";
+      columns = "CYCLE_NUMBER, CAPACITY";
+    } else {
+      tablename = "CYCLE_INFO";
+      columns = "CYCLE_NUMBER, TIME, CURRENT, VOLTAGE";
+
+      if (queryParams.time) {
+        filter += ` AND TIME >= ${queryParams.time.min} && TIME <= ${queryParams.time.max}`;
+      }
+    }
+
+    let query = `SELECT ${columns} FROM ${tablename} WHERE SID = '${req.cookies.sid}' AND filename = '${req.body.name}' ${filter}`;
+
+    try {
+      const rows = db.any(query);
+      res.json(rows);
+    } catch (error) {
+      res.status(400).end("Failed to fetch file content");
+    }
+  } catch (error) {
+    res.status(400).end("Failed to fetch file content");
   }
 });
 
