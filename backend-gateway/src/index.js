@@ -12,12 +12,25 @@ app.use(cookieParser());
 
 app.get("/api/get-session", async (req, res) => {
   // Do not generate new session if already exists
-  if (req.cookies.sid) {
-    res.end();
-    return;
-  }
-
   try {
+    if (req.cookies.sid) {
+      // Check if session exists in database
+      try {
+        const read_row = await db.any(
+          `SELECT * FROM VALID_SESSION_ID WHERE SID = '${req.cookies.sid}'`
+        );
+
+        // Do nothing if already exists
+        if (read_row.length > 0) {
+          res.end();
+          return;
+        }
+      } catch (err) {
+        res.status(400).end("Failed to check session table");
+        return;
+      }
+    }
+
     // Generate an uuid in database and fetch it
     const row = await db.one(
       `INSERT INTO VALID_SESSION_ID VALUES (gen_random_uuid()) RETURNING SID`
