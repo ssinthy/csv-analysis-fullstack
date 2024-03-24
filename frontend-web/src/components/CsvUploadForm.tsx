@@ -11,7 +11,7 @@ import {
 import { useCallback, useState } from "react";
 import axios from "axios";
 
-type CsvCategory = "CYCLE_INFO" | "CAPACITY";
+export type CsvCategory = "CYCLE_INFO" | "CAPACITY";
 
 function CsvUploadForm() {
   const [filename, setFilename] = useState<string | null>(null);
