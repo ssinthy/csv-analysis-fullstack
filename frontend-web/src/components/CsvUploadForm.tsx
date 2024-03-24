@@ -9,6 +9,7 @@ import {
   Button,
 } from "@mui/material";
 import { useCallback, useState } from "react";
+import axios from "axios";
 
 type CsvCategory = "CYCLE_INFO" | "CAPACITY";
 
@@ -17,7 +18,30 @@ function CsvUploadForm() {
   const [filetype, setFiletype] = useState<CsvCategory | null>(null);
   const [filecontent, setFilecontent] = useState<File | null>(null);
 
-  const onSubmit = useCallback(() => {}, [filename, filetype, filecontent]);
+  const onSubmit = useCallback(
+    async (event: React.SyntheticEvent) => {
+      event.preventDefault();
+      // TODO: show toast
+      if (!filename || !filetype || !filecontent) return;
+
+      let formData = new FormData();
+      formData.append("name", filename);
+      formData.append("type", filetype);
+      formData.append("csv-file", filecontent);
+
+      try {
+        await axios.post("/api/upload-csv", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      } catch (error) {
+        // TODO: handle error
+        console.log(error);
+      }
+    },
+    [filename, filetype, filecontent]
+  );
 
   return (
     <form onSubmit={onSubmit}>
