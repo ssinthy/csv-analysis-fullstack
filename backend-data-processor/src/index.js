@@ -77,8 +77,6 @@ app.post("/upload-csv", upload.single("csv-file"), async (req, res) => {
           )
         )
       );
-
-      res.end("Success!");
     } else if (req.body.type === "CYCLE_INFO") {
       // Read csv lines
       const [csv_header, ...csv_lines] = await readCsv(req.file.filename);
@@ -97,11 +95,26 @@ app.post("/upload-csv", upload.single("csv-file"), async (req, res) => {
           )
         )
       );
-
-      res.end("Success!");
     }
+
+    await db.none(
+      `INSERT INTO FILE_LIST VALUES ('${sid}', '${req.body.name}', '${req.body.type}')`
+    );
+
+    res.end("Success!");
   } catch (error) {
     res.status(400).end("Failed to insert all / some rows from CSV!");
+  }
+});
+
+app.get("/myfiles", async (req, res) => {
+  try {
+    const rows = await db.any(
+      `SELECT FILENAME, FILE_TYPE FROM FILE_LIST WHERE SID = '${req.cookies.sid}'`
+    );
+    res.json(rows);
+  } catch (error) {
+    res.end("Failed to fetch file list");
   }
 });
 
