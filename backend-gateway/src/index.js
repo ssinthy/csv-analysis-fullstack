@@ -16,12 +16,12 @@ app.get("/api/get-session", async (req, res) => {
     if (req.cookies.sid) {
       // Check if session exists in database
       try {
-        const read_row = await db.any(
+        const rows = await db.any(
           `SELECT * FROM VALID_SESSION_ID WHERE SID = '${req.cookies.sid}'`
         );
 
         // Do nothing if already exists
-        if (read_row.length > 0) {
+        if (rows.length > 0) {
           res.end();
           return;
         }

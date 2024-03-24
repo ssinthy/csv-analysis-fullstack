@@ -56,4 +56,4 @@ List of following data:
 | Param | Type |
 | ----------- | ----------- |
 | filename | File |
-| type | "CAPACITY" or "CYCLE_INFO" |
+| file_type | "CAPACITY" or "CYCLE_INFO" |
