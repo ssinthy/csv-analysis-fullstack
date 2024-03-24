@@ -33,9 +33,19 @@ async function readCsv(filename) {
 
 function isCapacityCsvHeader(headers) {
   return (
-    headers.length == 2 &&
+    headers.length === 2 &&
     headers[0].toLowerCase() === "cycle_number" &&
     headers[1].toLowerCase() === "capacity"
+  );
+}
+
+function isCycleInfoCsvHeader(headers) {
+  return (
+    headers.length === 4 &&
+    headers[0].toLowerCase() === "cycle_number" &&
+    headers[1].toLowerCase() === "time" &&
+    headers[2].toLowerCase() === "current" &&
+    headers[3].toLowerCase() === "voltage"
   );
 }
 
@@ -48,17 +58,17 @@ app.post("/upload-csv", upload.single("csv-file"), async (req, res) => {
     return;
   }
 
-  if (req.body.type === "CAPACITY") {
-    // Read csv lines
-    const [csv_header, ...csv_lines] = await readCsv(req.file.filename);
+  try {
+    if (req.body.type === "CAPACITY") {
+      // Read csv lines
+      const [csv_header, ...csv_lines] = await readCsv(req.file.filename);
 
-    // Reject if csv format is not actually capacity type
-    if (!isCapacityCsvHeader(csv_header)) {
-      res.status(400).end("CSV file is not capacity type");
-      return;
-    }
+      // Reject if csv format is not actually capacity type
+      if (!isCapacityCsvHeader(csv_header)) {
+        res.status(400).end("CSV file is not capacity type");
+        return;
+      }
 
-    try {
       // Push each line to DB
       await Promise.all(
         csv_lines.map((elem) =>
@@ -69,12 +79,29 @@ app.post("/upload-csv", upload.single("csv-file"), async (req, res) => {
       );
 
       res.end("Success!");
-    } catch (error) {
-      res.status(400).end("Failed to insert all / some rows from CSV!");
+    } else if (req.body.type === "CYCLE_INFO") {
+      // Read csv lines
+      const [csv_header, ...csv_lines] = await readCsv(req.file.filename);
+
+      // Reject if csv format is not actually cycle info type
+      if (!isCycleInfoCsvHeader(csv_header)) {
+        res.status(400).end("CSV file is not cycle info type");
+        return;
+      }
+
+      // Push each line to DB
+      await Promise.all(
+        csv_lines.map((elem) =>
+          db.none(
+            `INSERT INTO CYCLE_INFO VALUES ('${sid}', '${req.body.name}', ${elem[0]}, ${elem[1]}, ${elem[2]}, ${elem[3]})`
+          )
+        )
+      );
+
+      res.end("Success!");
     }
-  } else if (req.body.type === "CYCLE_INFO") {
-    res.status(400).end("Unsupported CSV type");
-    return;
+  } catch (error) {
+    res.status(400).end("Failed to insert all / some rows from CSV!");
   }
 });
 
