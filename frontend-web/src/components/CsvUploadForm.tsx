@@ -45,6 +45,7 @@ function CsvUploadForm() {
       } catch (error) {
         // TODO: handle error
         window.alert(error);
+        setUploading(false);
       }
     },
     [filename, filetype, filecontent]
