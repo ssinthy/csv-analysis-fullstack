@@ -25,12 +25,6 @@ import {
 } from "recharts";
 import { keys } from "lodash";
 
-const data = [
-  { name: "Page A", uv: 400, pv: 2400, amt: 2400 },
-  { name: "Page A", uv: 450, pv: 2420, amt: 2410 },
-  { name: "Page A", uv: 500, pv: 3400, amt: 3400 },
-];
-
 type Props = {
   selectedFile: FileMetadata | null;
 };
@@ -40,13 +34,13 @@ function Visualizer(props: Props) {
 
   const [minCycleNumber, setMinCycleNumber] = useState<number>(0);
   const [minTime, setMinTime] = useState<number>(0);
-  const [maxCycleNumber, setMaxCycleNumber] = useState<number>(0);
+  const [maxCycleNumber, setMaxCycleNumber] = useState<number>(50);
   const [maxTime, setMaxTime] = useState<number>(0);
   const [isLoading, setLoading] = useState<boolean>(false);
 
   const [chartData, setChartData] = useState<object[]>([]);
-  const [XAxisArg, setXAxisArg] = useState<string>("");
-  const [YAxisArg, setYAxisArg] = useState<string>("");
+  const [XAxisArg, setXAxisArg] = useState<string | null>(null);
+  const [YAxisArg, setYAxisArg] = useState<string | null>(null);
 
   const onSubmit = useCallback(
     async (e: React.SyntheticEvent) => {
@@ -111,6 +105,7 @@ function Visualizer(props: Props) {
                 label="Min"
                 type="number"
                 size="small"
+                value={minCycleNumber}
                 onChange={(e) =>
                   setMinCycleNumber(parseInt(e.target.value, 10))
                 }
@@ -119,6 +114,7 @@ function Visualizer(props: Props) {
                 label="Max"
                 type="number"
                 size="small"
+                value={maxCycleNumber}
                 onChange={(e) =>
                   setMaxCycleNumber(parseInt(e.target.value, 10))
                 }
@@ -134,12 +130,14 @@ function Visualizer(props: Props) {
                   label="Min"
                   type="number"
                   size="small"
+                  value={minTime}
                   onChange={(e) => setMinTime(parseInt(e.target.value, 10))}
                 />
                 <TextField
                   label="Max"
                   size="small"
                   type="number"
+                  value={maxTime}
                   onChange={(e) => setMaxTime(parseInt(e.target.value, 10))}
                 />
               </FormGroup>
@@ -159,39 +157,41 @@ function Visualizer(props: Props) {
         </Box>
       </form>
 
-      <Box component={"form"}>
-        <FormControl required style={{ minWidth: "100px" }} size="small">
-          <InputLabel id="type-dd1">X Axis</InputLabel>
-          <Select
-            label="File type"
-            labelId="type-dd1"
-            value={XAxisArg}
-            onChange={(e) => setXAxisArg(e.target.value)}
-          >
-            {chartDataProps.map((arg) => (
-              <MenuItem key={arg} value={arg}>
-                {arg}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      {chartData.length > 0 && (
+        <Box component={"form"}>
+          <FormControl required style={{ minWidth: "100px" }} size="small">
+            <InputLabel id="type-dd1">X Axis</InputLabel>
+            <Select
+              label="File type"
+              labelId="type-dd1"
+              value={XAxisArg}
+              onChange={(e) => setXAxisArg(e.target.value)}
+            >
+              {chartDataProps.map((arg) => (
+                <MenuItem key={arg} value={arg}>
+                  {arg}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-        <FormControl required style={{ minWidth: "100px" }} size="small">
-          <InputLabel id="type-dd2">Y Axis</InputLabel>
-          <Select
-            label="File type"
-            labelId="type-dd2"
-            value={YAxisArg}
-            onChange={(e) => setYAxisArg(e.target.value)}
-          >
-            {chartDataProps.map((arg) => (
-              <MenuItem key={arg} value={arg}>
-                {arg}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
+          <FormControl required style={{ minWidth: "100px" }} size="small">
+            <InputLabel id="type-dd2">Y Axis</InputLabel>
+            <Select
+              label="File type"
+              labelId="type-dd2"
+              value={YAxisArg}
+              onChange={(e) => setYAxisArg(e.target.value)}
+            >
+              {chartDataProps.map((arg) => (
+                <MenuItem key={arg} value={arg}>
+                  {arg}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+      )}
 
       <Box padding={5}>
         <LineChart
@@ -200,11 +200,15 @@ function Visualizer(props: Props) {
           data={chartData}
           margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
         >
-          <Line type="monotone" dataKey={YAxisArg} stroke="#8884d8" />
-          <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-          <XAxis dataKey={XAxisArg} label={XAxisArg} />
-          <YAxis label={YAxisArg} />
-          <Tooltip />
+          {YAxisArg && XAxisArg && (
+            <>
+              <Line type="monotone" dataKey={YAxisArg} stroke="#8884d8" />
+              <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+              <XAxis dataKey={XAxisArg} label={XAxisArg} />
+              <YAxis label={YAxisArg} />
+              <Tooltip />
+            </>
+          )}
         </LineChart>
       </Box>
     </Grid>
