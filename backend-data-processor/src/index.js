@@ -9,7 +9,7 @@ const { parse } = require("csv-parse");
 const { finished } = require("stream/promises");
 const fs = require("fs");
 const pgp = require("pg-promise")();
-const db = pgp(`postgres://susu:potato@${env.POSTGRES_URL}/susu`);
+const db = pgp(`postgres://susu:potato@${process.env.POSTGRES_URL}/susu`);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "5000mb" }));

@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const port = 5000;
 const pgp = require("pg-promise")();
-const db = pgp(`postgres://susu:potato@${env.POSTGRES_URL}/susu`);
+const db = pgp(`postgres://susu:potato@${process.env.POSTGRES_URL}/susu`);
 const cookieParser = require("cookie-parser");
 var proxy = require("express-http-proxy");
 
