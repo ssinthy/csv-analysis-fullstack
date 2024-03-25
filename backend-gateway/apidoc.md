@@ -79,7 +79,10 @@ SID must be in cookie
 Filter argument can be any object. But the server understands the following:
 ```
 {
-  "property_name": { "min": "number", "max": "number" }
+  "minCycleNumber": "value",
+  "maxCycleNumber": "value",
+  "minTime": "value",
+  "maxTime": "value",
   ...
 }
 ```

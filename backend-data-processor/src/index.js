@@ -127,8 +127,9 @@ app.get("/filecontent", async (req, res) => {
       columns,
       filter = "";
 
-    if (queryParams.cycle_number) {
-      filter += ` AND CYCLE_NUMBER >= ${queryParams.cycle_number.min} && CYCLE_NUMBER <= ${queryParams.cycle_number.max}`;
+    // Set filter range for cycle number
+    if (queryParams.minCycleNumber && queryParams.maxCycleNumber) {
+      filter += ` AND CYCLE_NUMBER >= ${queryParams.minCycleNumber} AND CYCLE_NUMBER <= ${queryParams.maxCycleNumber}`;
     }
 
     if (filetype == "CAPACITY") {
@@ -138,16 +139,24 @@ app.get("/filecontent", async (req, res) => {
       tablename = "CYCLE_INFO";
       columns = "CYCLE_NUMBER, TIME, CURRENT, VOLTAGE";
 
-      if (queryParams.time) {
-        filter += ` AND TIME >= ${queryParams.time.min} && TIME <= ${queryParams.time.max}`;
+      // Set filter range for time
+      if (queryParams.minTime && queryParams.maxTime) {
+        filter += ` AND TIME >= ${queryParams.minTime} AND TIME <= ${queryParams.maxTime}`;
       }
     }
 
-    let query = `SELECT ${columns} FROM ${tablename} WHERE SID = '${req.cookies.sid}' AND filename = '${req.query.filename}' ${filter}`;
-
     try {
+      let query = `SELECT ${columns} FROM ${tablename} WHERE SID = '${req.cookies.sid}' AND filename = '${req.query.filename}' ${filter}`;
       const rows = await db.any(query);
-      res.json(rows);
+
+      res.json(
+        rows.map((data) => {
+          for (let key in data) {
+            data[key] = parseFloat(data[key]);
+          }
+          return data;
+        })
+      );
     } catch (error) {
       res.status(400).end("Failed to fetch file content");
     }
