@@ -1,21 +1,30 @@
 services:
-  # frontend-web:
-  #   image: csv-analysis-frontend-web
-  #   build: ./frontend-web
-  #   ports:
-  #     - 3000:5173
+  frontend-web:
+    image: csv-analysis-frontend-web
+    build: ./frontend-web
+    environment:
+      VITE_GW_SERVER: http://backend-gateway:5000
+    ports:
+      - 3000:5173
   
   backend-gateway:
     image: csv-analysis-gateway-server
     build: ./backend-gateway
-    ports:
-      - 5000:5000
+    environment:
+      POSTGRES_URL: db-postgres:5432
+      DP_SERVERS: http://backend-data-processor-1:5001 http://backend-data-processor-2:5001
 
-  backend-data-processor:
+  backend-data-processor-1:
     image: csv-analysis-data-processor-server
     build: ./backend-data-processor
-    ports:
-      - 5001:5001
+    environment:
+      POSTGRES_URL: db-postgres:5432
+  
+  backend-data-processor-2:
+    image: csv-analysis-data-processor-server
+    build: ./backend-data-processor
+    environment:
+      POSTGRES_URL: db-postgres:5432
   
   db-postgres:
     image: postgres
@@ -24,8 +33,6 @@ services:
     environment:
       POSTGRES_USER: susu
       POSTGRES_PASSWORD: potato
-    ports:
-      - 9000:5432
     volumes:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
   
