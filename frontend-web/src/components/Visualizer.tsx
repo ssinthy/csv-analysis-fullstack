@@ -94,71 +94,69 @@ function Visualizer(props: Props) {
         {selectedFile.filename}
       </Typography>
 
-      <form onSubmit={onSubmit}>
-        <div
-          style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
-        >
+      <form
+        onSubmit={onSubmit}
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+        }}
+      >
+        <Box margin={"5px"}>
+          <InputLabel>Cycle Number</InputLabel>
+          <FormGroup row>
+            <TextField
+              label="Min"
+              type="number"
+              size="small"
+              value={minCycleNumber}
+              onChange={(e) => setMinCycleNumber(parseInt(e.target.value, 10))}
+            />
+            <TextField
+              label="Max"
+              type="number"
+              size="small"
+              value={maxCycleNumber}
+              onChange={(e) => setMaxCycleNumber(parseInt(e.target.value, 10))}
+            />
+          </FormGroup>
+        </Box>
+
+        {selectedFile?.file_type === "CYCLE_INFO" && (
           <Box margin={"5px"}>
-            <InputLabel>Cycle Number</InputLabel>
+            <InputLabel>Time</InputLabel>
             <FormGroup row>
               <TextField
                 label="Min"
                 type="number"
                 size="small"
-                value={minCycleNumber}
-                onChange={(e) =>
-                  setMinCycleNumber(parseInt(e.target.value, 10))
-                }
+                value={minTime}
+                onChange={(e) => setMinTime(parseInt(e.target.value, 10))}
               />
               <TextField
                 label="Max"
-                type="number"
                 size="small"
-                value={maxCycleNumber}
-                onChange={(e) =>
-                  setMaxCycleNumber(parseInt(e.target.value, 10))
-                }
+                type="number"
+                value={maxTime}
+                onChange={(e) => setMaxTime(parseInt(e.target.value, 10))}
               />
             </FormGroup>
           </Box>
+        )}
 
-          {selectedFile?.file_type === "CYCLE_INFO" && (
-            <Box margin={"5px"}>
-              <InputLabel>Time</InputLabel>
-              <FormGroup row>
-                <TextField
-                  label="Min"
-                  type="number"
-                  size="small"
-                  value={minTime}
-                  onChange={(e) => setMinTime(parseInt(e.target.value, 10))}
-                />
-                <TextField
-                  label="Max"
-                  size="small"
-                  type="number"
-                  value={maxTime}
-                  onChange={(e) => setMaxTime(parseInt(e.target.value, 10))}
-                />
-              </FormGroup>
-            </Box>
-          )}
-        </div>
-        <Box margin={"5px"}>
-          <Button
-            variant="outlined"
-            color="secondary"
-            disabled={isLoading}
-            type="submit"
-            size="small"
-          >
-            {isLoading ? "Loading..." : "Load"}
-          </Button>
-        </Box>
+        <Button
+          variant="outlined"
+          color="secondary"
+          disabled={isLoading}
+          type="submit"
+          size="small"
+        >
+          {isLoading ? "Loading..." : "Load"}
+        </Button>
       </form>
 
       {chartData.length > 0 && (
-        <Box component={"form"}>
+        <Box component={"form"} margin={"10px"}>
           <FormControl required style={{ minWidth: "100px" }} size="small">
             <InputLabel id="type-dd1">X Axis</InputLabel>
             <Select
