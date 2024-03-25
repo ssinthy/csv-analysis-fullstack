@@ -55,6 +55,14 @@ app.use(async function sessionCheckMiddleware(req, res, next) {
   res.status(500).send({ error: "Session does not exist" });
 });
 
+const dpServers = process.env.DP_SERVERS.split(" ");
+let serverIdx = 0;
+
+function getNextServer() {
+  serverIdx = (serverIdx + 1) % dpServers.length;
+  return dpServers[serverIdx];
+}
+
 // Proxy all API requests to DP server and DO NOT parse multipart request
 app.use("/api", (req, res, next) => {
   const isMultipartRequest = (req) => {
@@ -62,7 +70,7 @@ app.use("/api", (req, res, next) => {
     return contentTypeHeader && contentTypeHeader.indexOf("multipart") > -1;
   };
 
-  return proxy("http://localhost:5001", {
+  return proxy(getNextServer(), {
     parseReqBody: !isMultipartRequest(req),
     // your other fields here...
   })(req, res, next);
