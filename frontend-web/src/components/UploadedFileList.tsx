@@ -4,12 +4,12 @@ import { ListItem, ListItemText, Button } from "@mui/material";
 
 type Props = {
   myFileList: FileMetadata[];
+  selectedFile: FileMetadata | null;
+  setSelectedFile: Function;
 };
 
 export default function UploadedFileList(props: Props) {
-  const { myFileList } = props;
-
-  const [selectedFile, setSelectedFile] = useState<FileMetadata | null>(null);
+  const { myFileList, selectedFile, setSelectedFile } = props;
 
   return (
     <>

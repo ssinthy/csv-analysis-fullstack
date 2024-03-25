@@ -8,6 +8,7 @@ import { UploadedFileList } from "./components/UploadedFileList";
 
 function App() {
   const [myFileList, setMyFileList] = useState<FileMetadata[]>([]);
+  const [selectedFile, setSelectedFile] = useState<FileMetadata | null>(null);
 
   useEffect(() => {
     async function fetchSession() {
@@ -35,11 +36,6 @@ function App() {
   }, []);
 
   return (
-    // <div>
-
-    //   {/* <CsvUploadForm />
-    //   <Visualizer myFileList={myFileList} /> */}
-    // </div>
     <Grid
       container
       spacing={2}
@@ -78,7 +74,11 @@ function App() {
           direction={"column"}
           component={List}
         >
-          <UploadedFileList myFileList={myFileList} />
+          <UploadedFileList
+            myFileList={myFileList}
+            selectedFile={selectedFile}
+            setSelectedFile={setSelectedFile}
+          />
         </Grid>
         <Grid
           item
@@ -92,15 +92,16 @@ function App() {
           <CsvUploadForm />
         </Grid>
       </Grid>
+
       <Grid
         container
         xs={12}
         md={9}
         direction={"column"}
         style={{ height: "100vh" }}
+        gap={10}
       >
-        <Grid item xs={2} md={2} style={{ backgroundColor: "orange" }}></Grid>
-        <Grid item xs={10} md={10} style={{ backgroundColor: "gray" }}></Grid>
+        <Visualizer selectedFile={selectedFile} />
       </Grid>
     </Grid>
   );

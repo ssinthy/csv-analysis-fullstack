@@ -8,18 +8,20 @@ import {
   Input,
   FormGroup,
   Button,
+  Box,
+  Typography,
+  Grid,
+  TextField,
 } from "@mui/material";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 
 type Props = {
-  myFileList: FileMetadata[];
+  selectedFile: FileMetadata | null;
 };
 
 function Visualizer(props: Props) {
-  const { myFileList } = props;
-
-  const [selectedFile, setSelectedFile] = useState<FileMetadata | null>(null);
+  const { selectedFile } = props;
 
   const [minCycleNumber, setMinCycleNumber] = useState<number>(0);
   const [minTime, setMinTime] = useState<number>(0);
@@ -64,74 +66,75 @@ function Visualizer(props: Props) {
     [selectedFile, minCycleNumber, minTime, maxCycleNumber, maxTime]
   );
 
+  if (!selectedFile) {
+    return <Typography color={"red"}>No file selected</Typography>;
+  }
+
   return (
-    <form style={{ border: "1px solid black" }} onSubmit={onSubmit}>
-      <FormControl required>
-        <InputLabel>File type</InputLabel>
-        <Select
-          value={selectedFile}
-          onChange={(e) => setSelectedFile(e.target.value as FileMetadata)}
+    <Grid item padding={5}>
+      <Typography variant="h4" marginBottom={2}>
+        {selectedFile.filename}
+      </Typography>
+
+      <form onSubmit={onSubmit}>
+        <div
+          style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
         >
-          {myFileList.map((item: FileMetadata) => {
-            const label: string = `${item.file_type} | ${item.filename}`;
-            return (
-              //@ts-ignore - necessary to load object into value
-              <MenuItem key={label} value={item}>
-                {label}
-              </MenuItem>
-            );
-          })}
-        </Select>
-        <FormHelperText>Select your file </FormHelperText>
-      </FormControl>
+          <Box margin={"5px"}>
+            <InputLabel>Cycle Number</InputLabel>
+            <FormGroup row>
+              <TextField
+                label="Min"
+                type="number"
+                size="small"
+                onChange={(e) =>
+                  setMinCycleNumber(parseInt(e.target.value, 10))
+                }
+              />
+              <TextField
+                label="Max"
+                type="number"
+                size="small"
+                onChange={(e) =>
+                  setMaxCycleNumber(parseInt(e.target.value, 10))
+                }
+              />
+            </FormGroup>
+          </Box>
 
-      <FormGroup row>
-        <InputLabel>Cycle Number</InputLabel>
-        <FormControl>
-          <InputLabel>Min</InputLabel>
-          <Input
-            type="number"
-            onChange={(e) => setMinCycleNumber(parseInt(e.target.value, 10))}
-          />
-        </FormControl>
-        <FormControl>
-          <InputLabel>Max</InputLabel>
-          <Input
-            type="number"
-            onChange={(e) => setMaxCycleNumber(parseInt(e.target.value, 10))}
-          />
-        </FormControl>
-      </FormGroup>
-
-      {selectedFile?.file_type === "CYCLE_INFO" && (
-        <FormGroup row>
-          <InputLabel>Time</InputLabel>
-          <FormControl>
-            <InputLabel>Min</InputLabel>
-            <Input
-              type="number"
-              onChange={(e) => setMinTime(parseInt(e.target.value, 10))}
-            />
-          </FormControl>
-          <FormControl>
-            <InputLabel>Max</InputLabel>
-            <Input
-              type="number"
-              onChange={(e) => setMaxTime(parseInt(e.target.value, 10))}
-            />
-          </FormControl>
-        </FormGroup>
-      )}
-
-      <Button
-        variant="outlined"
-        color="secondary"
-        disabled={isLoading}
-        type="submit"
-      >
-        {isLoading ? "Loading..." : "Load"}
-      </Button>
-    </form>
+          {selectedFile?.file_type === "CYCLE_INFO" && (
+            <Box margin={"5px"}>
+              <InputLabel>Time</InputLabel>
+              <FormGroup row>
+                <TextField
+                  label="Min"
+                  type="number"
+                  size="small"
+                  onChange={(e) => setMinTime(parseInt(e.target.value, 10))}
+                />
+                <TextField
+                  label="Max"
+                  size="small"
+                  type="number"
+                  onChange={(e) => setMaxTime(parseInt(e.target.value, 10))}
+                />
+              </FormGroup>
+            </Box>
+          )}
+        </div>
+        <Box margin={"5px"}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            disabled={isLoading}
+            type="submit"
+            size="small"
+          >
+            {isLoading ? "Loading..." : "Load"}
+          </Button>
+        </Box>
+      </form>
+    </Grid>
   );
 }
 

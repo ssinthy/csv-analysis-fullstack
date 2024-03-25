@@ -69,6 +69,7 @@ function CsvUploadForm() {
         focused
         required
         value={filename}
+        size="small"
         onChange={(e) => setFilename(e.target.value)}
       />
       <FormControl required>
@@ -90,6 +91,7 @@ function CsvUploadForm() {
       >
         <Input
           type="file"
+          size="small"
           inputProps={{ accept: ".csv" }}
           style={{ fontSize: "small" }}
           onChange={(e) => {
@@ -104,38 +106,11 @@ function CsvUploadForm() {
         variant="outlined"
         color="secondary"
         disabled={isUploading}
+        size="small"
         type="submit"
       >
         {isUploading ? "Uploading..." : "Upload"}
       </Button>
-      {/* <FormControl required>
-        <InputLabel>File name</InputLabel>
-        <TextField
-          value={filename}
-          onChange={(e) => setFilename(e.target.value)}
-        />
-        <FormHelperText>Give your file a nice name</FormHelperText>
-      </FormControl>
-      <FormControl required>
-        <InputLabel>File type</InputLabel>
-        <Select
-          value={filetype}
-          onChange={(e) => setFiletype(e.target.value as CsvCategory)}
-        >
-          <MenuItem value={"CAPACITY"}>Capacity</MenuItem>
-          <MenuItem value={"CYCLE_INFO"}>Cycle info</MenuItem>
-        </Select>
-        <FormHelperText>Select your file type</FormHelperText>
-      </FormControl>
-      
-      <Button
-        variant="outlined"
-        color="secondary"
-        disabled={isUploading}
-        type="submit"
-      >
-        {isUploading ? "Uploading..." : "Upload"}
-      </Button> */}
     </form>
   );
 }
