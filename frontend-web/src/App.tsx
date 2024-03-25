@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CsvUploadForm } from "./components/CsvUploadForm";
 import { FileMetadata } from "./types";
 import axios from "axios";
-import { Card, CardContent, Grid, List, Typography } from "@mui/material";
+import { Box, Card, CardContent, Grid, List, Typography } from "@mui/material";
 import { Visualizer } from "./components/Visualizer";
 import { UploadedFileList } from "./components/UploadedFileList";
 
@@ -47,6 +47,7 @@ function App() {
       style={{
         width: "100%",
         margin: 0,
+        maxHeight: "100vh",
       }}
     >
       <Grid
@@ -55,6 +56,7 @@ function App() {
         md={3}
         direction={"column"}
         display={{ xs: "none", md: "inherit" }}
+        style={{ height: "100vh" }}
       >
         <Grid
           item
@@ -70,7 +72,7 @@ function App() {
         <Grid
           item
           xs={0}
-          md={7}
+          md={6}
           style={{ overflow: "auto" }}
           display={{ xs: "none", md: "inherit" }}
           direction={"column"}
@@ -78,11 +80,25 @@ function App() {
         >
           <UploadedFileList myFileList={myFileList} />
         </Grid>
-        <Grid item xs={0} md={4} style={{ backgroundColor: "yellow" }}>
+        <Grid
+          item
+          xs={0}
+          md={5}
+          component={Box}
+          spacing={10}
+          style={{ overflow: "auto" }}
+          fontSize={"small"}
+        >
           <CsvUploadForm />
         </Grid>
       </Grid>
-      <Grid container xs={12} md={9} direction={"column"}>
+      <Grid
+        container
+        xs={12}
+        md={9}
+        direction={"column"}
+        style={{ height: "100vh" }}
+      >
         <Grid item xs={2} md={2} style={{ backgroundColor: "orange" }}></Grid>
         <Grid item xs={10} md={10} style={{ backgroundColor: "gray" }}></Grid>
       </Grid>

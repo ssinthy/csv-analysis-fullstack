@@ -7,6 +7,8 @@ import {
   MenuItem,
   TextField,
   Button,
+  Box,
+  Typography,
 } from "@mui/material";
 import { useCallback, useState } from "react";
 import { CsvCategory } from "../types";
@@ -51,8 +53,62 @@ function CsvUploadForm() {
   );
 
   return (
-    <form onSubmit={onSubmit} style={{ border: "1px solid black" }}>
+    <form
+      onSubmit={onSubmit}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        padding: "1rem",
+        gap: 15,
+      }}
+    >
+      <Typography>Upload a CSV file</Typography>
+      <TextField
+        label="File name"
+        color="secondary"
+        focused
+        required
+        value={filename}
+        onChange={(e) => setFilename(e.target.value)}
+      />
       <FormControl required>
+        <InputLabel id="type-dd">File type</InputLabel>
+        <Select
+          label="File type"
+          labelId="type-dd"
+          value={filetype}
+          onChange={(e) => setFiletype(e.target.value as CsvCategory)}
+        >
+          <MenuItem value={"CAPACITY"}>Capacity</MenuItem>
+          <MenuItem value={"CYCLE_INFO"}>Cycle info</MenuItem>
+        </Select>
+      </FormControl>
+
+      <FormControl
+        required
+        style={{ border: "1px solid lightgray", padding: 15, borderRadius: 10 }}
+      >
+        <Input
+          type="file"
+          inputProps={{ accept: ".csv" }}
+          style={{ fontSize: "small" }}
+          onChange={(e) => {
+            let files = (e.target as HTMLInputElement).files;
+            setFilecontent(files?.length ? files[0] : null);
+          }}
+        />
+        <FormHelperText>Upload a csv file</FormHelperText>
+      </FormControl>
+
+      <Button
+        variant="outlined"
+        color="secondary"
+        disabled={isUploading}
+        type="submit"
+      >
+        {isUploading ? "Uploading..." : "Upload"}
+      </Button>
+      {/* <FormControl required>
         <InputLabel>File name</InputLabel>
         <TextField
           value={filename}
@@ -71,17 +127,7 @@ function CsvUploadForm() {
         </Select>
         <FormHelperText>Select your file type</FormHelperText>
       </FormControl>
-      <FormControl required>
-        <Input
-          type="file"
-          inputProps={{ accept: ".csv" }}
-          onChange={(e) => {
-            let files = (e.target as HTMLInputElement).files;
-            setFilecontent(files?.length ? files[0] : null);
-          }}
-        />
-        <FormHelperText>Upload a csv file</FormHelperText>
-      </FormControl>
+      
       <Button
         variant="outlined"
         color="secondary"
@@ -89,7 +135,7 @@ function CsvUploadForm() {
         type="submit"
       >
         {isUploading ? "Uploading..." : "Upload"}
-      </Button>
+      </Button> */}
     </form>
   );
 }
