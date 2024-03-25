@@ -14,7 +14,7 @@ import {
   TextField,
 } from "@mui/material";
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   LineChart,
   Line,
@@ -23,6 +23,8 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
+import { keys } from "lodash";
+
 const data = [
   { name: "Page A", uv: 400, pv: 2400, amt: 2400 },
   { name: "Page A", uv: 450, pv: 2420, amt: 2410 },
@@ -41,6 +43,10 @@ function Visualizer(props: Props) {
   const [maxCycleNumber, setMaxCycleNumber] = useState<number>(0);
   const [maxTime, setMaxTime] = useState<number>(0);
   const [isLoading, setLoading] = useState<boolean>(false);
+
+  const [chartData, setChartData] = useState<object[]>([]);
+  const [XAxisArg, setXAxisArg] = useState<string>("");
+  const [YAxisArg, setYAxisArg] = useState<string>("");
 
   const onSubmit = useCallback(
     async (e: React.SyntheticEvent) => {
@@ -69,7 +75,7 @@ function Visualizer(props: Props) {
             ...filters,
           },
         });
-        console.log(data);
+        setChartData(data);
       } catch (error) {
         window.alert("Unable to fetch file content");
       }
@@ -78,6 +84,11 @@ function Visualizer(props: Props) {
     },
     [selectedFile, minCycleNumber, minTime, maxCycleNumber, maxTime]
   );
+
+  const chartDataProps = useMemo(() => {
+    if (chartData.length === 0) return [];
+    return keys(chartData[0]);
+  }, [chartData]);
 
   if (!selectedFile) {
     return <Typography color={"red"}>No file selected</Typography>;
@@ -148,17 +159,51 @@ function Visualizer(props: Props) {
         </Box>
       </form>
 
+      <Box component={"form"}>
+        <FormControl required style={{ minWidth: "100px" }} size="small">
+          <InputLabel id="type-dd1">X Axis</InputLabel>
+          <Select
+            label="File type"
+            labelId="type-dd1"
+            value={XAxisArg}
+            onChange={(e) => setXAxisArg(e.target.value)}
+          >
+            {chartDataProps.map((arg) => (
+              <MenuItem key={arg} value={arg}>
+                {arg}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl required style={{ minWidth: "100px" }} size="small">
+          <InputLabel id="type-dd2">Y Axis</InputLabel>
+          <Select
+            label="File type"
+            labelId="type-dd2"
+            value={YAxisArg}
+            onChange={(e) => setYAxisArg(e.target.value)}
+          >
+            {chartDataProps.map((arg) => (
+              <MenuItem key={arg} value={arg}>
+                {arg}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
+
       <Box padding={5}>
         <LineChart
           width={600}
           height={300}
-          data={data}
+          data={chartData}
           margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
         >
-          <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+          <Line type="monotone" dataKey={YAxisArg} stroke="#8884d8" />
           <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-          <XAxis dataKey="name" />
-          <YAxis />
+          <XAxis dataKey={XAxisArg} label={XAxisArg} />
+          <YAxis label={YAxisArg} />
           <Tooltip />
         </LineChart>
       </Box>
