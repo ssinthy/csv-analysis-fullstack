@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const port = 5001;
@@ -8,7 +9,7 @@ const { parse } = require("csv-parse");
 const { finished } = require("stream/promises");
 const fs = require("fs");
 const pgp = require("pg-promise")();
-const db = pgp("postgres://susu:potato@localhost:9000/susu");
+const db = pgp(`postgres://susu:potato@${env.POSTGRES_URL}/susu`);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "5000mb" }));
