@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { CsvUploadForm } from "./components/CsvUploadForm";
+import { FileMetadata } from "./types";
 import axios from "axios";
+import { Visualizer } from "./components/Visualizer";
 
 function App() {
+  const [myFileList, setMyFileList] = useState<FileMetadata[]>([]);
+
   useEffect(() => {
     async function fetchSession() {
       try {
@@ -19,18 +23,19 @@ function App() {
     async function fetchMyFileList() {
       try {
         const { data } = await axios.get("/api/myfiles");
-        console.log(data);
+        setMyFileList(data);
       } catch (error) {
         window.alert("Unable to fetch my file list");
       }
     }
 
     fetchMyFileList();
-  });
+  }, []);
 
   return (
     <div>
       <CsvUploadForm />
+      <Visualizer myFileList={myFileList} />
     </div>
   );
 }

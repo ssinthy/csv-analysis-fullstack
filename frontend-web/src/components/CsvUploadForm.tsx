@@ -9,9 +9,8 @@ import {
   Button,
 } from "@mui/material";
 import { useCallback, useState } from "react";
+import { CsvCategory } from "../types";
 import axios from "axios";
-
-type CsvCategory = "CYCLE_INFO" | "CAPACITY";
 
 function CsvUploadForm() {
   const [filename, setFilename] = useState<string | null>(null);
@@ -52,7 +51,7 @@ function CsvUploadForm() {
   );
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} style={{ border: "1px solid black" }}>
       <FormControl required>
         <InputLabel>File name</InputLabel>
         <TextField

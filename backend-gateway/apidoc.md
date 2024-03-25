@@ -57,3 +57,36 @@ List of following data:
 | ----------- | ----------- |
 | filename | File |
 | file_type | "CAPACITY" or "CYCLE_INFO" |
+
+## API 104
+
+**Type**: REST
+
+**Method**: GET
+
+**Endpoint**: /api/filecontent
+
+**Request**:
+
+SID must be in cookie
+
+| Param | Type |
+| ----------- | ----------- |
+| filename | File |
+| file_type | "CAPACITY" or "CYCLE_INFO" |
+| filters | Anything (see bellow) |
+
+Filter argument can be any object. But the server understands the following:
+```
+{
+  "minCycleNumber": "value",
+  "maxCycleNumber": "value",
+  "minTime": "value",
+  "maxTime": "value",
+  ...
+}
+```
+
+**Response**:
+
+An array of data where the properties corresponds to type of data i.e. capcity or cycle info

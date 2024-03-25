@@ -114,7 +114,54 @@ app.get("/myfiles", async (req, res) => {
     );
     res.json(rows);
   } catch (error) {
-    res.end("Failed to fetch file list");
+    res.status(400).end("Failed to fetch file list");
+  }
+});
+
+app.get("/filecontent", async (req, res) => {
+  const filetype = req.query.file_type;
+  try {
+    const queryParams = req.query;
+
+    let tablename,
+      columns,
+      filter = "";
+
+    // Set filter range for cycle number
+    if (queryParams.minCycleNumber && queryParams.maxCycleNumber) {
+      filter += ` AND CYCLE_NUMBER >= ${queryParams.minCycleNumber} AND CYCLE_NUMBER <= ${queryParams.maxCycleNumber}`;
+    }
+
+    if (filetype == "CAPACITY") {
+      tablename = "CAPACITY_INFO";
+      columns = "CYCLE_NUMBER, CAPACITY";
+    } else {
+      tablename = "CYCLE_INFO";
+      columns = "CYCLE_NUMBER, TIME, CURRENT, VOLTAGE";
+
+      // Set filter range for time
+      if (queryParams.minTime && queryParams.maxTime) {
+        filter += ` AND TIME >= ${queryParams.minTime} AND TIME <= ${queryParams.maxTime}`;
+      }
+    }
+
+    try {
+      let query = `SELECT ${columns} FROM ${tablename} WHERE SID = '${req.cookies.sid}' AND filename = '${req.query.filename}' ${filter}`;
+      const rows = await db.any(query);
+
+      res.json(
+        rows.map((data) => {
+          for (let key in data) {
+            data[key] = parseFloat(data[key]);
+          }
+          return data;
+        })
+      );
+    } catch (error) {
+      res.status(400).end("Failed to fetch file content");
+    }
+  } catch (error) {
+    res.status(400).end("Failed to fetch file content");
   }
 });
 
