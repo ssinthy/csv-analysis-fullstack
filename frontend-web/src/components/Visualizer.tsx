@@ -23,7 +23,7 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import { keys } from "lodash";
+import { keys, sortBy } from "lodash";
 
 type Props = {
   selectedFile: FileMetadata | null;
@@ -83,6 +83,12 @@ function Visualizer(props: Props) {
     if (chartData.length === 0) return [];
     return keys(chartData[0]);
   }, [chartData]);
+
+  useEffect(() => {
+    if (XAxisArg) {
+      setChartData((prev) => sortBy(prev, [XAxisArg]));
+    }
+  }, [XAxisArg]);
 
   if (!selectedFile) {
     return <Typography color={"red"}>No file selected</Typography>;
